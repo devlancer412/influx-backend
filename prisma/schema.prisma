@@ -1,0 +1,231 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Account {
+  id         Int            @id @default(autoincrement())
+  influencer Influencer?
+  brand      Brand?
+  tags       AccountTag[]
+  issues     IssuesReport[]
+  payments   PaymentLog[]
+  telegram   Telegram?
+  twitter    Twitter?
+  tiktok     Tiktok?
+  instagram  Instagram?
+  youtube    Youtube?
+  name       String
+  email      String         @unique
+  logo       String         @db.VarChar(1000)
+  region     String
+  language   String
+}
+
+model Influencer {
+  id           Int                  @id @default(autoincrement())
+  accountId    Int                  @unique
+  account      Account              @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  campaigns    CampaignInfluencer[]
+  isVIP        Boolean
+  pris         Int
+  loginChannel LoginChannel
+}
+
+enum LoginChannel {
+  Telegram
+  Twitter
+  Tiktok
+  Instagram
+  Youtube
+}
+
+model Brand {
+  id          Int        @id @default(autoincrement())
+  accountId   Int        @unique
+  account     Account    @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  campaigns   Campaign[]
+  desc        String     @db.Text
+  salesPhase  SalesPhase
+  budget      Float      @db.Float
+  isVetted    Boolean
+  pdfAudit    Boolean
+  pdfReview   Boolean
+  profileLive Boolean
+}
+
+enum SalesPhase {
+  PreLaunch
+  Presale
+  Launched
+}
+
+model Tag {
+  id       Int          @id @default(autoincrement())
+  name     String
+  accounts AccountTag[]
+}
+
+model AccountTag {
+  id        Int     @id @default(autoincrement())
+  tagId     Int
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  accountId Int
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Campaign {
+  id          Int                  @id @default(autoincrement())
+  influencers CampaignInfluencer[]
+  name        String
+  avgER       AvgER
+  negoBudget  Float                @db.Float
+  creator     Int
+  brand       Brand                @relation(fields: [creator], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum AvgER {
+  Poor
+  Normal
+  Good
+  Excellent
+}
+
+model CampaignInfluencer {
+  id           Int            @id @default(autoincrement())
+  campaignId   Int
+  campaign     Campaign       @relation(fields: [campaignId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  influencerId Int
+  influencer   Influencer     @relation(fields: [influencerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status       CampaignStatus
+}
+
+enum CampaignStatus {
+  NotContacted
+  Outreached
+  InNegotiation
+  WaitingForPostDetails
+  PaymentDone
+  PostDone
+  Cancelled
+}
+
+model IssuesReport {
+  id        Int     @id @default(autoincrement())
+  accountId Int
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  issue     String  @db.Text
+}
+
+model PaymentLog {
+  id            Int     @id @default(autoincrement())
+  transactionId String
+  amount        Float   @db.Float
+  walletAddress String
+  accountId     Int
+  account       Account @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Telegram {
+  id                  Int               @id @default(autoincrement())
+  telegramHistory     TelegramHistory[]
+  username            String
+  channelMembers      Int
+  accountId           Int               @unique
+  account             Account           @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  socialUrl           String
+  averageInteractions Int
+}
+
+model TelegramHistory {
+  id           Int      @id @default(autoincrement())
+  telegramId   Int
+  telegram     Telegram @relation(fields: [telegramId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date         DateTime @db.Date
+  interactions Int
+}
+
+model Twitter {
+  id                 Int              @id @default(autoincrement())
+  twitterHistory     TwitterHistory[]
+  username           String
+  followers          Int
+  accountId          Int              @unique
+  account            Account          @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  socialUrl          String
+  averageImpressions Int
+}
+
+model TwitterHistory {
+  id          Int      @id @default(autoincrement())
+  twitterId   Int
+  twitter     Twitter  @relation(fields: [twitterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date        DateTime @db.Date
+  impressions Int
+}
+
+model Tiktok {
+  id            Int             @id @default(autoincrement())
+  tiktokHistory TiktokHistory[]
+  username      String
+  followers     Int
+  accountId     Int             @unique
+  account       Account         @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  socialUrl     String
+  averageLikes  Int
+}
+
+model TiktokHistory {
+  id       Int      @id @default(autoincrement())
+  tiktokId Int
+  tiktok   Tiktok   @relation(fields: [tiktokId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date     DateTime @db.Date
+  likes    Int
+}
+
+model Instagram {
+  id                  Int                @id @default(autoincrement())
+  instagramHistory    InstagramHistory[]
+  username            String
+  followers           Int
+  accountId           Int                @unique
+  account             Account            @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  socialUrl           String
+  averageInteractions Int
+}
+
+model InstagramHistory {
+  id           Int       @id @default(autoincrement())
+  instagramId  Int
+  instagram    Instagram @relation(fields: [instagramId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date         DateTime  @db.Date
+  interactions Int
+}
+
+model Youtube {
+  id             Int              @id @default(autoincrement())
+  youtubeHistory YoutubeHistory[]
+  username       String
+  subscribers    Int
+  accountId      Int              @unique
+  account        Account          @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  socialUrl      String
+  averageLikes   Int
+}
+
+model YoutubeHistory {
+  id           Int      @id @default(autoincrement())
+  youtubeId    Int
+  youtube      Youtube  @relation(fields: [youtubeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date         DateTime @db.Date
+  interactions Int
+}
