@@ -7,10 +7,10 @@ app.use('/api', routes)
 
 if (process.env.NODE_ENV === 'development') {
   app.listen(
-    process.env.APP_PORT || 5000,
+    app.get('port'),
     () => {
       console.log(
-        `Server running at https://${app.get('host')}:${app.get('port')}`
+        `Server running at http://${app.get('host')}:${app.get('port')}`
       )
     }
   )

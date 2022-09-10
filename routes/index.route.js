@@ -3,7 +3,7 @@ const influencerRoutes = require('./influencer.route')
 
 const router = express.Router()
 
-// auth routes => /auth
+// influencer routes => /influencer
 router.use('/influencer', influencerRoutes)
 
 

@@ -37,7 +37,7 @@ model Influencer {
   account      Account              @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   campaigns    CampaignInfluencer[]
   isVIP        Boolean
-  pris         Int
+  pr           Int
   loginChannel LoginChannel
 }
 
