@@ -23,10 +23,13 @@ const store = async (req, res) => {
 }
 
 const getList = async (req, res) => {
-  
   try {
-  // To Do:
-  const campaigns = await prisma.influencer.findMany({});
+  const { accountId } = req.params
+  const campaigns = await prisma.influencer.findMany({
+    where: {
+      accountId
+    }
+  });
 
   res.json(campaigns);  
   } catch (error) {

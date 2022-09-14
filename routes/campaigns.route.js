@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.post('/', campaignsCtrl.store)
 
-router.get('/', campaignsCtrl.getList)
+router.get('/:accountId', campaignsCtrl.getList)
 
 router.post('/addInfluencer', campaignsCtrl.addInfluencer)
 
