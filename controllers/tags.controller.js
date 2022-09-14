@@ -35,12 +35,31 @@ const getList = async (req, res) => {
 const addTag = async (req, res) => {
   try {
       const { tagId, accountId } = req.body
+
+      const tag = await prisma.tag.findUnique({
+        where: {
+          id: tagId
+        }
+      })
+
+      const account = await prisma.account.findUnique({
+        where: {
+          id: accountId
+        }
+      })
+
+      if (!tag || !account) {
+        return res.json("error")
+      }
+
       await prisma.accountTag.create({
         data:{
           tagId,
           accountId
         }
       });
+
+      return res.json("success")
   } catch (error) {
     console.log(error)
     res.json(error)

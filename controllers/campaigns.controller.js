@@ -24,14 +24,36 @@ const store = async (req, res) => {
 
 const getList = async (req, res) => {
   try {
-  const { accountId } = req.params
-  const campaigns = await prisma.influencer.findMany({
-    where: {
-      accountId
-    }
-  });
+    let { accountId } = req.params
+    accountId = parseInt(accountId)
 
-  res.json(campaigns);  
+    const account = await prisma.account.findUnique({
+      where: {
+        id: accountId
+      },
+      include: {
+        influencer: {
+          include: {
+            campaigns: true
+          }
+        },
+        brand: {
+          include: {
+            campaigns: true
+          }
+        }
+      }
+    })
+
+    let campaigns = []
+
+    if (account && account.brand) {
+      campaigns = account.brand.campaigns
+    } else if (account && account.influencer) {
+      campaigns = account.influencer.campaigns
+    }
+
+    res.json(campaigns); 
   } catch (error) {
     console.log(error)
     res.json(error)
@@ -40,10 +62,12 @@ const getList = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const { id } = req.params
+    let { id } = req.params
+    id = parseInt(id)
+
     const campaign = await prisma.campaign.findUnique({
       where: {
-        campaignId: id
+        id
       }
     })
     
@@ -56,13 +80,30 @@ const getById = async (req, res) => {
 
 const addInfluencer = async (req, res) => {
   try {
-      const { campaignId, influencerId } = req.body
+      const { campaignId, influencerId, status } = req.body
+      const campaign = await prisma.campaign.findUnique({
+        where:{
+          id: campaignId
+        }
+      })
+
+      const influencer = await prisma.influencer.findUnique({
+        where: {
+          id: influencerId
+        }
+      })
+
+      if (!campaign || !influencer) return res.json("error")
+
       await prisma.campaignInfluencer.create({
         data:{
           campaignId,
-          influencerId
+          influencerId,
+          status
         }
       });
+
+      res.json("success")
   } catch (error) {
     console.log(error)
     res.json(error)

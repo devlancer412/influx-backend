@@ -41,7 +41,7 @@ const store = async (req, res) => {
       },
     })
   
-    const brnad = await prisma.brand.findUnique({
+    const brand = await prisma.brand.findUnique({
       where: {
         id: newBrand.id,
       },

@@ -81,6 +81,7 @@ model AccountTag {
   tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   accountId Int
   account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  @@unique([tagId, accountId])
 }
 
 model Campaign {
@@ -107,6 +108,7 @@ model CampaignInfluencer {
   influencerId Int
   influencer   Influencer     @relation(fields: [influencerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   status       CampaignStatus
+  @@unique([campaignId, influencerId])
 }
 
 enum CampaignStatus {

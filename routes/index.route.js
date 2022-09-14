@@ -24,6 +24,6 @@ router.use('/tags', tagsRoutes)
 router.use('/issues', issuesReportRoutes)
 
 // paymentLog routes => /payment
-router.use('/payment', paymentLogRoutes)
+router.use('/payments', paymentLogRoutes)
 
 module.exports = router

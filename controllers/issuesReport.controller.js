@@ -6,6 +6,15 @@ const store = async (req, res) => {
   // To Do:
   try {
     const { accountId, issue } = req.body;
+    
+    const account = await prisma.account.findUnique({
+      where: {
+        id: accountId
+      }
+    })
+
+    if (!account) return res.json("error")
+
     const newIssue = await prisma.issuesReport.create({
       data: {
         accountId,
