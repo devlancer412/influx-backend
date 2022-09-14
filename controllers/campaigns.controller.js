@@ -35,6 +35,22 @@ const getList = async (req, res) => {
   }  
 }
 
+const getById = async (req, res) => {
+  try {
+    const { id } = req.params
+    const campaign = await prisma.campaign.findUnique({
+      where: {
+        campaignId: id
+      }
+    })
+    
+    res.json(campaign)
+  } catch (error) {
+    console.log(error)
+    res.json(error)
+  }
+}
+
 const addInfluencer = async (req, res) => {
   try {
       const { campaignId, influencerId } = req.body
@@ -53,5 +69,6 @@ const addInfluencer = async (req, res) => {
 module.exports = {
   store,
   getList,
-  addInfluencer
+  addInfluencer,
+  getById
 }

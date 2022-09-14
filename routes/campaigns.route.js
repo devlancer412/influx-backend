@@ -9,4 +9,6 @@ router.get('/', campaignsCtrl.getList)
 
 router.post('/addInfluencer', campaignsCtrl.addInfluencer)
 
+router.get('/:id', campaignsCtrl.getById)
+
 module.exports = router
