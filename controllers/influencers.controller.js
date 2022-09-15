@@ -4,9 +4,9 @@ const prisma = new PrismaClient()
 
 const store = async (req, res) => {
   try {
-    const { id, name, email, logo, isVIP, engagementRate, region, language, loginChannel } = req.body;
+    const { accountId, name, email, logo, isVIP, engagementRate, region, language, loginChannel } = req.body;
     let influencerId
-    if (!id) {
+    if (!accountId) {
       const newAccount = await prisma.account.create({
         data: {
           name,
@@ -30,7 +30,7 @@ const store = async (req, res) => {
     } else {
       await prisma.account.update({
         where: {
-          id
+          id: accountId
         },
         data: {
           name,
@@ -43,7 +43,7 @@ const store = async (req, res) => {
 
       const influencer = await prisma.influencer.update({
         where: {
-          accountId: id
+          accountId
         },
         data: {
           isVIP,
@@ -99,17 +99,19 @@ const getList = async (req, res) => {
 
     influencers = influencers.filter(influencer => 
       (!ER || ER && influencer.engagementRate === ER) && 
-      (!language || language && influencer.language.toLowerCase().includes(language.toLowerCase())) &&
-      (!userName ||  userName && influencer.userName.toLowerCase().includes(userName.toLowerCase())) &&
-      (!location || location && influencer.region.toLowerCase().includes(location.toLowerCase()))
+      (!language || language && influencer.account.language.toLowerCase().includes(language.toLowerCase())) &&
+      (!userName ||  userName && influencer.account.name.toLowerCase().includes(userName.toLowerCase())) &&
+      (!location || location && influencer.account.region.toLowerCase().includes(location.toLowerCase()))
     )
 
     if (tagArr.length) {
       influencers = influencers.filter(influencer => {
-        const tags = influencer.tags.map(tag => tag.tag.name)
+        if (!influencer.account.tags) return false;
+        const tags = influencer.account.tags.map(tag => tag.tag.name)
+        console.log(tags)
         let matched = true
         tagArr.forEach(tag => {
-          if (!tags.include(tag)) matched = false
+          if (!tags.includes(tag)) matched = false
         })
         return matched
       })

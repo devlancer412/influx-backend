@@ -13,7 +13,7 @@ const store = async (req, res) => {
       }
     })
 
-    if (account) return res.json("error")
+    if (!account) return res.json("error")
 
     const newPayment = await prisma.paymentLog.create({
       data: {
