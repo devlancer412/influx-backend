@@ -34,7 +34,11 @@ const getList = async (req, res) => {
       include: {
         influencer: {
           include: {
-            campaigns: true
+            campaigns: {
+              include: {
+                campaign: true
+              }
+            }
           }
         },
         brand: {
