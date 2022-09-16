@@ -19,7 +19,7 @@ const store = async (req, res) => {
       pdfReview,
       profileLive,
     } = req.body
-    
+
     let brandId
     if (!accountId) {
       const newAccount = await prisma.account.create({
@@ -31,7 +31,7 @@ const store = async (req, res) => {
           language,
         },
       })
-    
+
       const newBrand = await prisma.brand.create({
         data: {
           accountId: newAccount.id,
@@ -49,20 +49,20 @@ const store = async (req, res) => {
     } else {
       await prisma.account.update({
         where: {
-          id: accountId
+          id: accountId,
         },
         data: {
           name,
           email,
           logo,
           region,
-          language
-        }
+          language,
+        },
       })
-      
+
       const brand = await prisma.brand.update({
         where: {
-          accountId
+          accountId,
         },
         data: {
           desc,
@@ -71,22 +71,22 @@ const store = async (req, res) => {
           isVetted,
           pdfAudit,
           pdfReview,
-          profileLive
-        }
+          profileLive,
+        },
       })
-      
+
       brandId = brand.id
     }
 
     const brand = await prisma.brand.findUnique({
-        where: {
-          id: brandId,
-        },
-        include: {
-          account: true,
-        },
-      })
-      
+      where: {
+        id: brandId,
+      },
+      include: {
+        account: true,
+      },
+    })
+
     res.json(brand)
   } catch (error) {
     console.log(error)
