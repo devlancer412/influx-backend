@@ -5,12 +5,11 @@ const prisma = new PrismaClient()
 const store = async (req, res) => {
   // To Do:
   try {
-    const { name, avgER, negoBudget, creator } = req.body;
+    const { name, avgER, creator } = req.body;
     const newCampaign = await prisma.campaign.create({
       data: {
         name,
         avgER,
-        negoBudget,
         creator
       }
     });
@@ -43,7 +42,19 @@ const getList = async (req, res) => {
         },
         brand: {
           include: {
-            campaigns: true
+            campaigns: {
+              include: {
+                influencers: {
+                  include: {
+                    influencer: {
+                      include: {
+                        account: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -72,6 +83,17 @@ const getById = async (req, res) => {
     const campaign = await prisma.campaign.findUnique({
       where: {
         id
+      },
+      include: {
+        influencers: {
+          include: {
+            influencer: {
+              include: {
+                account: true
+              }
+            }
+          }
+        }
       }
     })
     
@@ -84,7 +106,7 @@ const getById = async (req, res) => {
 
 const addInfluencer = async (req, res) => {
   try {
-      const { campaignId, influencerId, status } = req.body
+      const { campaignId, influencerId, status, negotiatedBudget } = req.body
       const campaign = await prisma.campaign.findUnique({
         where:{
           id: campaignId
@@ -103,9 +125,19 @@ const addInfluencer = async (req, res) => {
         data:{
           campaignId,
           influencerId,
-          status
+          status,
+          negotiatedBudget
         }
       });
+
+      await prisma.campaign.update({
+        where: {
+          id: campaignId
+        },
+        data: {
+          negoBudget: campaign.negoBudget + negotiatedBudget
+        }
+      })
 
       res.json("success")
   } catch (error) {

@@ -5,6 +5,7 @@ const prisma = new PrismaClient()
 const store = async (req, res) => {
   try {
     const {
+      accountId,
       name,
       email,
       logo,
@@ -18,38 +19,74 @@ const store = async (req, res) => {
       pdfReview,
       profileLive,
     } = req.body
-    const newAccount = await prisma.account.create({
-      data: {
-        name,
-        email,
-        logo,
-        region,
-        language,
-      },
-    })
-  
-    const newBrand = await prisma.brand.create({
-      data: {
-        accountId: newAccount.id,
-        desc,
-        salesPhase,
-        budget,
-        isVetted,
-        pdfAudit,
-        pdfReview,
-        profileLive,
-      },
-    })
-  
+    
+    let brandId
+    if (!accountId) {
+      const newAccount = await prisma.account.create({
+        data: {
+          name,
+          email,
+          logo,
+          region,
+          language,
+        },
+      })
+    
+      const newBrand = await prisma.brand.create({
+        data: {
+          accountId: newAccount.id,
+          desc,
+          salesPhase,
+          budget,
+          isVetted,
+          pdfAudit,
+          pdfReview,
+          profileLive,
+        },
+      })
+
+      brandId = newBrand.id
+    } else {
+      await prisma.account.update({
+        where: {
+          id: accountId
+        },
+        data: {
+          name,
+          email,
+          logo,
+          region,
+          language
+        }
+      })
+      
+      const brand = await prisma.brand.update({
+        where: {
+          accountId
+        },
+        data: {
+          desc,
+          salesPhase,
+          budget,
+          isVetted,
+          pdfAudit,
+          pdfReview,
+          profileLive
+        }
+      })
+      
+      brandId = brand.id
+    }
+
     const brand = await prisma.brand.findUnique({
-      where: {
-        id: newBrand.id,
-      },
-      include: {
-        account: true,
-      },
-    })
-  
+        where: {
+          id: brandId,
+        },
+        include: {
+          account: true,
+        },
+      })
+      
     res.json(brand)
   } catch (error) {
     console.log(error)
