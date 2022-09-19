@@ -47,6 +47,8 @@ const store = async (req, res) => {
 
       brandId = newBrand.id
     } else {
+      if (!(await prisma.brand.findUnique({ where: { accountId } })))
+        return res.json('error')
       await prisma.account.update({
         where: {
           id: accountId,
@@ -110,7 +112,47 @@ const getList = async (req, res) => {
   }
 }
 
+const getById = async (req, res) => {
+  const { id } = req.params
+  try {
+    const brand = await prisma.brand.findUnique({
+      where: {
+        id: id * 1,
+      },
+      include: {
+        account: {
+          include: {
+            tags: true,
+          },
+        },
+        campaigns: {
+          include: {
+            influencers: {
+              include: {
+                influencer: {
+                  include: {
+                    account: {
+                      include: {
+                        tags: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+    res.json(brand)
+  } catch (error) {
+    console.log(error)
+    res.json(error)
+  }
+}
+
 module.exports = {
   store,
   getList,
+  getById,
 }

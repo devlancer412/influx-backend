@@ -7,4 +7,6 @@ router.post('/', brandsCtrl.store)
 
 router.get('/', brandsCtrl.getList)
 
+router.get('/:id', brandsCtrl.getById)
+
 module.exports = router
