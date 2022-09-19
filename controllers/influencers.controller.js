@@ -14,6 +14,9 @@ const store = async (req, res) => {
       region,
       language,
       loginChannel,
+      mainChannel,
+      nicke,
+      contactLink,
     } = req.body
     let influencerId
     if (!accountId) {
@@ -33,6 +36,9 @@ const store = async (req, res) => {
           isVIP,
           engagementRate,
           loginChannel,
+          mainChannel,
+          nicke,
+          contactLink,
         },
       })
 
@@ -62,6 +68,9 @@ const store = async (req, res) => {
           isVIP,
           engagementRate,
           loginChannel,
+          mainChannel,
+          nicke,
+          contactLink,
         },
       })
       influencerId = influencer.id
@@ -86,20 +95,12 @@ const store = async (req, res) => {
 const getList = async (req, res) => {
   try {
     // To Do: filter
-    const { ER, language, audienceSize, userName, location, tags } = req.query
+    const { ER, language, audienceSize, userName, location } = req.query
     let { minPrice, maxPrice } = req.query
 
     let influencers = await prisma.influencer.findMany({
       include: {
-        account: {
-          include: {
-            tags: {
-              include: {
-                tag: true,
-              },
-            },
-          },
-        },
+        account: true,
         campaigns: {
           include: {
             campaign: true,
@@ -108,7 +109,7 @@ const getList = async (req, res) => {
       },
     })
 
-    const tagArr = tags ? tags.split(',') : []
+    // const tagArr = tags ? tags.split(',') : []
 
     influencers = influencers.filter(
       (influencer) =>
@@ -130,18 +131,18 @@ const getList = async (req, res) => {
               .includes(location.toLowerCase()))),
     )
 
-    if (tagArr.length) {
-      influencers = influencers.filter((influencer) => {
-        if (!influencer.account.tags) return false
-        const tags = influencer.account.tags.map((tag) => tag.tag.name)
-        console.log(tags)
-        let matched = true
-        tagArr.forEach((tag) => {
-          if (!tags.includes(tag)) matched = false
-        })
-        return matched
-      })
-    }
+    // if (tagArr.length) {
+    //   influencers = influencers.filter((influencer) => {
+    //     if (!influencer.account.tags) return false
+    //     const tags = influencer.account.tags.map((tag) => tag.tag.name)
+    //     console.log(tags)
+    //     let matched = true
+    //     tagArr.forEach((tag) => {
+    //       if (!tags.includes(tag)) matched = false
+    //     })
+    //     return matched
+    //   })
+    // }
 
     influencers.forEach((influencer) => {
       const budgets = influencer.campaigns.map(
@@ -173,20 +174,16 @@ const getById = async (req, res) => {
   try {
     const influencer = await prisma.influencer.findUnique({
       where: {
-        id: id * 1
+        id: id * 1,
       },
       include: {
-        account: {
-          include: {
-            tags: true
-          }
-        },
+        account: true,
         campaigns: {
           include: {
-            campaign: true
-          }
-        }
-      }
+            campaign: true,
+          },
+        },
+      },
     })
 
     res.json(influencer)

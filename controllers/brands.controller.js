@@ -120,22 +120,14 @@ const getById = async (req, res) => {
         id: id * 1,
       },
       include: {
-        account: {
-          include: {
-            tags: true,
-          },
-        },
+        account: true,
         campaigns: {
           include: {
             influencers: {
               include: {
                 influencer: {
                   include: {
-                    account: {
-                      include: {
-                        tags: true,
-                      },
-                    },
+                    account: true,
                   },
                 },
               },

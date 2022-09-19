@@ -18,7 +18,7 @@ router.use('/brands', brandsRoutes)
 router.use('/campaigns', campaignsRoutes)
 
 // tags routes => /tags
-router.use('/tags', tagsRoutes)
+// router.use('/tags', tagsRoutes)
 
 // issuesReport routes => /issues
 router.use('/issues', issuesReportRoutes)
