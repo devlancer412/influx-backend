@@ -100,7 +100,15 @@ const getList = async (req, res) => {
 
     let influencers = await prisma.influencer.findMany({
       include: {
-        account: true,
+        account: {
+          include: {
+            telegram: true,
+            twitter: true,
+            tiktok: true,
+            instagram: true,
+            youtube: true
+          }
+        },
         campaigns: {
           include: {
             campaign: true,
