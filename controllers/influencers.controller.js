@@ -95,8 +95,8 @@ const store = async (req, res) => {
 const getList = async (req, res) => {
   try {
     // To Do: filter
-    const { ER, language, audienceSize, userName, location } = req.query
-    let { minPrice, maxPrice } = req.query
+    const { ER, language, userName, location } = req.query
+    let { minPrice, maxPrice, minAudienceSize, maxAudienceSize } = req.query
 
     let influencers = await prisma.influencer.findMany({
       include: {
@@ -118,7 +118,6 @@ const getList = async (req, res) => {
     })
 
     // const tagArr = tags ? tags.split(',') : []
-
     influencers = influencers.filter(
       (influencer) =>
         (!ER || (ER && influencer.engagementRate === ER)) &&
@@ -159,16 +158,36 @@ const getList = async (req, res) => {
       influencer.priceRange = [Math.min(...budgets), Math.max(...budgets)]
     })
 
-    minPrice = minPrice ? minPrice * 1 : 0
-    maxPrice = maxPrice ? maxPrice * 1 : Number.MAX_VALUE
+    minAudienceSize = minAudienceSize ? minAudienceSize * 1 : 0
+    maxAudienceSize = maxAudienceSize ? maxAudienceSize * 1 : Number.MAX_VALUE
 
-    influencers = influencers.filter(
-      (influencer) =>
-        (influencer.priceRange[1] >= minPrice &&
-          influencer.priceRange[0] <= maxPrice) ||
-        (influencer.priceRange[0] <= maxPrice &&
-          influencer.priceRange[1] >= minPrice),
-    )
+    influencers = influencers.filter((influencer) => {
+      let maxFollowers = Math.max(
+        influencer.account.telegram
+          ? influencer.account.telegram.channelMembers
+          : 0,
+        influencer.account.twitter ? influencer.account.twitter.followers : 0,
+        influencer.account.tiktok ? influencer.account.tiktok.followers : 0,
+        influencer.account.instagram
+          ? influencer.account.instagram.followers
+          : 0,
+        influencer.account.youtube ? influencer.account.youtube.subscribers : 0,
+      )
+      return minAudienceSize <= maxFollowers && maxFollowers <= maxAudienceSize
+    })
+
+    if (minPrice && maxPrice) {
+      minPrice = minPrice * 1
+      maxPrice = maxPrice * 1
+
+      influencers = influencers.filter(
+        (influencer) =>
+          (influencer.priceRange[1] >= minPrice &&
+            influencer.priceRange[0] <= maxPrice) ||
+          (influencer.priceRange[0] <= maxPrice &&
+            influencer.priceRange[1] >= minPrice),
+      )
+    }
 
     res.json(influencers)
   } catch (error) {
