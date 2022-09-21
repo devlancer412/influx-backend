@@ -106,8 +106,8 @@ const getList = async (req, res) => {
             twitter: true,
             tiktok: true,
             instagram: true,
-            youtube: true
-          }
+            youtube: true,
+          },
         },
         campaigns: {
           include: {
