@@ -9,4 +9,6 @@ router.get('/', brandsCtrl.getList)
 
 router.get('/:id', brandsCtrl.getById)
 
+router.get('/brandId/:email', brandsCtrl.getBrandIdByEmail)
+
 module.exports = router

@@ -143,8 +143,28 @@ const getById = async (req, res) => {
   }
 }
 
+const getBrandIdByEmail = async (req, res) => {
+  const { email } = req.params
+  try {
+    const account = await prisma.account.findFirst({
+      where: {
+        email,
+      },
+      include: {
+        brand: true,
+      },
+    })
+    if (!account || !account.brand) return res.json('Brand does not exist')
+    res.json(account.brand.id)
+  } catch (error) {
+    console.log(error)
+    res.json(error)
+  }
+}
+
 module.exports = {
   store,
   getList,
   getById,
+  getBrandIdByEmail,
 }
