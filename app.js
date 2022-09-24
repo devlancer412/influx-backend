@@ -3,6 +3,7 @@ const routes = require('./routes/index.route')
 const socialCtr = require('./controllers/social.controller')
 
 // Router
+app.get('/test', (req, res) => res.json("Test"))
 app.use('/api', routes)
 
 // socialCtr.storeTelegram();
