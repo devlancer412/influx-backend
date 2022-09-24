@@ -20,6 +20,13 @@ const store = async (req, res) => {
     } = req.body
     let influencerId
     if (!accountId) {
+      if (await prisma.account.findFirst({
+        where: {
+          email
+        }
+      })) {
+        return res.json("The email already exists")
+      }
       const newAccount = await prisma.account.create({
         data: {
           name,
@@ -45,7 +52,7 @@ const store = async (req, res) => {
       influencerId = newInfluencer.id
     } else {
       if (!(await prisma.influencer.findUnique({ where: { accountId } })))
-        return res.json('error')
+        return res.json("The account doesn't exist")
 
       await prisma.account.update({
         where: {

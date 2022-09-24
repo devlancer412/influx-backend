@@ -5,11 +5,11 @@ const prisma = new PrismaClient()
 const store = async (req, res) => {
   // To Do:
   try {
-    const { name, avgER, creator } = req.body
+    const { name, creator } = req.body
     const newCampaign = await prisma.campaign.create({
       data: {
         name,
-        avgER,
+        avgER: 'Normal',
         creator,
       },
     })

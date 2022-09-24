@@ -8,7 +8,7 @@ app.use('/api', routes)
 // socialCtr.storeTelegram();
 // socialCtr.storeTiktok();
 // socialCtr.storeTwitter();
-// socialCtr.storeInstagram();
+// socialCtr.storeInstagram('socialblade', 1);
 // socialCtr.storeYoutube();
 
 if (process.env.NODE_ENV === 'development') {
