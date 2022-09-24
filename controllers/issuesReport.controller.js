@@ -25,7 +25,7 @@ const store = async (req, res) => {
     res.json(newIssue);  
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }  
 }
 
@@ -37,7 +37,7 @@ const getList = async (req, res) => {
   res.json(issues);  
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }  
 }
 

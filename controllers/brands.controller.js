@@ -27,7 +27,7 @@ const store = async (req, res) => {
           email
         }
       })) {
-        return res.json("The Email already exists")
+        return res.status(400).json("The Email already exists")
       }
       const newAccount = await prisma.account.create({
         data: {
@@ -55,7 +55,7 @@ const store = async (req, res) => {
       brandId = newBrand.id
     } else {
       if (!(await prisma.brand.findUnique({ where: { accountId } })))
-        return res.json("The account doesn't exist")
+        return res.status(400).json("The account doesn't exist")
       await prisma.account.update({
         where: {
           id: accountId,
@@ -99,7 +99,7 @@ const store = async (req, res) => {
     res.json(brand)
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }
 }
 
@@ -115,7 +115,7 @@ const getList = async (req, res) => {
     res.json(brands)
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }
 }
 
@@ -146,7 +146,7 @@ const getById = async (req, res) => {
     res.json(brand)
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }
 }
 
@@ -165,7 +165,7 @@ const getBrandIdByEmail = async (req, res) => {
     res.json(account.brand.id)
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }
 }
 

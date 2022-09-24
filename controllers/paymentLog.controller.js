@@ -13,7 +13,7 @@ const store = async (req, res) => {
       }
     })
 
-    if (!account) return res.json("error")
+    if (!account) return res.status(400).json("The account doesn't exist")
 
     const newPayment = await prisma.paymentLog.create({
       data: {
@@ -27,7 +27,7 @@ const store = async (req, res) => {
     res.json(newPayment);  
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }  
 }
 
@@ -39,7 +39,7 @@ const getList = async (req, res) => {
   res.json(logs);  
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }  
 }
 

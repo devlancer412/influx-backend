@@ -17,7 +17,7 @@ const store = async (req, res) => {
     res.json(newCampaign)
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }
 }
 
@@ -71,7 +71,7 @@ const getList = async (req, res) => {
     res.json(campaigns)
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }
 }
 
@@ -117,7 +117,7 @@ const getById = async (req, res) => {
     res.json(campaign)
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }
 }
 
@@ -136,7 +136,7 @@ const addInfluencer = async (req, res) => {
       },
     })
 
-    if (!campaign || !influencer) return res.json('error')
+    if (!campaign || !influencer) return res.status(400).json("The account doesn't exist")
 
     await prisma.campaignInfluencer.create({
       data: {
@@ -159,7 +159,7 @@ const addInfluencer = async (req, res) => {
     res.json('success')
   } catch (error) {
     console.log(error)
-    res.json(error)
+    res.status(400).json(error)
   }
 }
 
