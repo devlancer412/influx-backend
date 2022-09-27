@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client')
+const readXlsxFile = require('read-excel-file/node')
 
 const prisma = new PrismaClient()
 
@@ -20,12 +21,14 @@ const store = async (req, res) => {
     } = req.body
     let influencerId
     if (!accountId) {
-      if (await prisma.account.findFirst({
-        where: {
-          email
-        }
-      })) {
-        return res.status(400).json("The email already exists")
+      if (
+        await prisma.account.findFirst({
+          where: {
+            email,
+          },
+        })
+      ) {
+        return res.status(400).json('The email already exists')
       }
       const newAccount = await prisma.account.create({
         data: {
@@ -96,6 +99,63 @@ const store = async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(400).json(error)
+  }
+}
+
+const uploadExcel = async (req, res) => {
+  try {
+    if (!req.file) {
+      res.status(400).send('Please upload an excel file!')
+    }
+    let path =
+      __dirname + '../resources/static/assets/uploads/' + req.file.filename
+
+    readXlsxFile(path).then(async (rows) => {
+      const titles = rows[0].map((title) => title.toLowerCase())
+
+      rows.shift()
+      for (const row of rows) {
+        const accountData = {
+          name: row[titles.indexOf('name')],
+          email: row[titles.indexOf('email')],
+          logo: row[titles.indexOf('logo')],
+          region: row[titles.indexOf('region')],
+          language: row[titles.indexOf('language')],
+        }
+
+        if (
+          await prisma.account.findFirst({
+            where: {
+              email: accountData.email,
+            },
+          })
+        ) {
+          continue
+        }
+
+        const account = await prisma.account.create({
+          data: accountData,
+        })
+
+        const influencerData = {
+          accountId: account.id,
+          isVIP: row[titles.indexOf('isvip')] === 'Yes',
+          engagementRate: row[titles.indexOf('engagementrate')],
+          loginChannel: row[titles.indexOf('loginchannel')],
+          contactLink: row[titles.indexOf('contactlink')],
+          nicke: row[titles.indexOf('nicke')],
+          mainChannel: row[titles.indexOf('mainchannel')],
+          promotionType: row[titles.indexOf('promotiontype')],
+        }
+
+        await prisma.influencer.create({
+          data: influencerData
+        })
+      }
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error })
   }
 }
 
@@ -231,4 +291,5 @@ module.exports = {
   store,
   getList,
   getById,
+  uploadExcel,
 }
