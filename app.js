@@ -6,7 +6,7 @@ const socialCtr = require('./controllers/social.controller')
 app.get('/test', (req, res) => res.json("Test"))
 app.use('/api', routes)
 
-// socialCtr.storeTelegram();
+socialCtr.storeTelegram();
 // socialCtr.storeTiktok();
 // socialCtr.storeTwitter();
 // socialCtr.storeInstagram('socialblade', 1);

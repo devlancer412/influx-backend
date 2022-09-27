@@ -8,11 +8,11 @@ const storeTelegram = async () => {
   try {
     const telegram = await prisma.telegram.create({
       data: {
-        username: 'yyy',
-        channelMembers: 400,
-        accountId: 7,
-        socialUrl: 'https://t.me/yyy',
-        averageInteractions: 2000,
+        username: 'ttt',
+        channelMembers: 1000,
+        accountId: 8,
+        socialUrl: 'https://t.me/ttt',
+        averageInteractions: 900,
       },
     })
 

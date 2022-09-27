@@ -39,8 +39,14 @@ model Influencer {
   engagementRate EngagementRate
   loginChannel   Channel
   mainChannel    Channel?
+  promotionType  PromotionType        @default(PaidPromo)
   niche          String?
   contactLink    String?
+}
+
+enum PromotionType {
+  PaidPromo
+  MayDoPaidPromo
 }
 
 enum EngagementRate {
