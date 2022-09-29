@@ -228,22 +228,22 @@ const getList = async (req, res) => {
     let { minPrice, maxPrice, minAudienceSize, maxAudienceSize } = req.query
 
     let influencers = await prisma.influencer.findMany({
-      // include: {
-      //   account: {
-      //     include: {
-      //       telegram: true,
-      //       twitter: true,
-      //       tiktok: true,
-      //       instagram: true,
-      //       youtube: true,
-      //     },
-      //   },
-      //   campaigns: {
-      //     include: {
-      //       campaign: true,
-      //     },
-      //   },
-      // },
+      include: {
+        account: {
+          include: {
+            telegram: true,
+            twitter: true,
+            tiktok: true,
+            instagram: true,
+            youtube: true,
+          },
+        },
+        campaigns: {
+          include: {
+            campaign: true,
+          },
+        },
+      },
     })
 
     // const tagArr = tags ? tags.split(',') : []
