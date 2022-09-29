@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client')
 const readXlsxFile = require('read-excel-file/node')
+const socialCtrl = require('./social.controller')
 
 const prisma = new PrismaClient()
 
@@ -155,63 +156,63 @@ const uploadExcel = async (req, res) => {
         const telegramData = {
           accountId: account.id,
           username: row[titles.indexOf('telegramusername')],
-          channelMembers:
-            parseInt(row[titles.indexOf('telegramchannelmembers')]) || 0,
           socialUrl: row[titles.indexOf('telegramsocialurl')],
-          averageInterations: row[titles.indexOf('telegramaverageinterations')],
         }
 
         await prisma.telegram.create({
           data: telegramData,
         })
 
+        await socialCtrl.storeTelegram(telegramData.username, account.id)
+
         const twitterData = {
           accountId: account.id,
           username: row[titles.indexOf('twitterusername')],
-          followers: parseInt(row[titles.indexOf('twitterfollowers')]) || 0,
           socialUrl: row[titles.indexOf('twittersocialurl')],
-          averageImpressions: row[titles.indexOf('twitteraverageimpressions')],
         }
 
         await prisma.twitter.create({
           data: twitterData,
         })
 
+        await socialCtrl.storeTwitter(twitterData.username, account.id)
+
         const tiktokData = {
           accountId: account.id,
           username: row[titles.indexOf('tiktokusername')],
-          followers: parseInt(row[titles.indexOf('tiktokfollowers')]) || 0,
           socialUrl: row[titles.indexOf('tiktoksocialurl')],
-          averageLikes: row[titles.indexOf('tiktokaveragelikes')],
         }
 
         await prisma.tiktok.create({
           data: tiktokData,
         })
 
+        await socialCtrl.storeTiktok(tiktokData.username, account.id)
+
         const instagramData = {
           accountId: account.id,
           username: row[titles.indexOf('instagramusername')],
-          followers: parseInt(row[titles.indexOf('instagramfollowers')]) || 0,
           socialUrl: row[titles.indexOf('instagramsocialurl')],
-          averageInterations: row[titles.indexOf('instagramaverageinteractions')],
         }
 
         await prisma.instagram.create({
           data: instagramData,
         })
 
+        await socialCtrl.storeTelegram(instagramData.username, account.id)
+
         const youtubeData = {
           accountId: account.id,
           username: row[titles.indexOf('youtubeusername')],
-          subscribers: parseInt(row[titles.indexOf('youtubesubscribers')]) || 0,
           socialUrl: row[titles.indexOf('youtubesocialurl')],
-          averageViews: row[titles.indexOf('youtubeaverageviews')],
         }
 
         await prisma.youtube.create({
           data: youtubeData,
         })
+
+        await socialCtrl.storeYoutube(youtubeData.username, account.id)
+
       }
     })
   } catch (error) {

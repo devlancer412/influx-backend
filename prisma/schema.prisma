@@ -143,11 +143,11 @@ model Telegram {
   id                  Int               @id @default(autoincrement())
   telegramHistory     TelegramHistory[]
   username            String
-  channelMembers      Int
+  channelMembers      Int               @default(0)
   accountId           Int               @unique
   account             Account           @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   socialUrl           String
-  averageInteractions Int
+  averageInteractions Int               @default(0)
 }
 
 model TelegramHistory {
@@ -162,11 +162,11 @@ model Twitter {
   id                 Int              @id @default(autoincrement())
   twitterHistory     TwitterHistory[]
   username           String
-  followers          Int
+  followers          Int              @default(0)
   accountId          Int              @unique
   account            Account          @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   socialUrl          String
-  averageImpressions Int
+  averageImpressions Int              @default(0)
 }
 
 model TwitterHistory {
@@ -181,11 +181,11 @@ model Tiktok {
   id            Int             @id @default(autoincrement())
   tiktokHistory TiktokHistory[]
   username      String
-  followers     Int
+  followers     Int             @default(0)
   accountId     Int             @unique
   account       Account         @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   socialUrl     String
-  averageLikes  Int
+  averageLikes  Int             @default(0)
 }
 
 model TiktokHistory {
@@ -200,11 +200,11 @@ model Instagram {
   id                  Int                @id @default(autoincrement())
   instagramHistory    InstagramHistory[]
   username            String
-  followers           Int
+  followers           Int                @default(0)
   accountId           Int                @unique
   account             Account            @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   socialUrl           String
-  averageInteractions Int
+  averageInteractions Int                @default(0)
 }
 
 model InstagramHistory {
@@ -219,7 +219,7 @@ model Youtube {
   id             Int              @id @default(autoincrement())
   youtubeHistory YoutubeHistory[]
   username       String
-  subscribers    Int
+  subscribers    Int              @default(0)
   accountId      Int              @unique
   account        Account          @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   socialUrl      String

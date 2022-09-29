@@ -3,14 +3,14 @@ const axios = require('axios')
 
 const prisma = new PrismaClient()
 
-const storeTelegram = async () => {
+const storeTelegram = async (query, accountId) => {
   // To Do:
   try {
     const telegram = await prisma.telegram.create({
       data: {
         username: 'ttt',
         channelMembers: 1000,
-        accountId: 8,
+        accountId,
         socialUrl: 'https://t.me/ttt',
         averageInteractions: 900,
       },
