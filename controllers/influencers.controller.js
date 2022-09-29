@@ -105,7 +105,7 @@ const store = async (req, res) => {
 const uploadExcel = async (req, res) => {
   try {
     if (!req.file) {
-      res.status(400).send('Please upload an excel file!')
+      return res.status(400).send('Please upload an excel file!')
     }
     let path =
       __dirname + '../resources/static/assets/uploads/' + req.file.filename
@@ -143,13 +143,74 @@ const uploadExcel = async (req, res) => {
           engagementRate: row[titles.indexOf('engagementrate')],
           loginChannel: row[titles.indexOf('loginchannel')],
           contactLink: row[titles.indexOf('contactlink')],
-          nicke: row[titles.indexOf('nicke')],
+          niche: row[titles.indexOf('niche')],
           mainChannel: row[titles.indexOf('mainchannel')],
           promotionType: row[titles.indexOf('promotiontype')],
         }
 
         await prisma.influencer.create({
-          data: influencerData
+          data: influencerData,
+        })
+
+        const telegramData = {
+          accountId: account.id,
+          username: row[titles.indexOf('telegramusername')],
+          channelMembers:
+            parseInt(row[titles.indexOf('telegramchannelmembers')]) || 0,
+          socialUrl: row[titles.indexOf('telegramsocialurl')],
+          averageInterations: row[titles.indexOf('telegramaverageinterations')],
+        }
+
+        await prisma.telegram.create({
+          data: telegramData,
+        })
+
+        const twitterData = {
+          accountId: account.id,
+          username: row[titles.indexOf('twitterusername')],
+          followers: parseInt(row[titles.indexOf('twitterfollowers')]) || 0,
+          socialUrl: row[titles.indexOf('twittersocialurl')],
+          averageImpressions: row[titles.indexOf('twitteraverageimpressions')],
+        }
+
+        await prisma.twitter.create({
+          data: twitterData,
+        })
+
+        const tiktokData = {
+          accountId: account.id,
+          username: row[titles.indexOf('tiktokusername')],
+          followers: parseInt(row[titles.indexOf('tiktokfollowers')]) || 0,
+          socialUrl: row[titles.indexOf('tiktoksocialurl')],
+          averageLikes: row[titles.indexOf('tiktokaveragelikes')],
+        }
+
+        await prisma.tiktok.create({
+          data: tiktokData,
+        })
+
+        const instagramData = {
+          accountId: account.id,
+          username: row[titles.indexOf('instagramusername')],
+          followers: parseInt(row[titles.indexOf('instagramfollowers')]) || 0,
+          socialUrl: row[titles.indexOf('instagramsocialurl')],
+          averageInterations: row[titles.indexOf('instagramaverageinteractions')],
+        }
+
+        await prisma.instagram.create({
+          data: instagramData,
+        })
+
+        const youtubeData = {
+          accountId: account.id,
+          username: row[titles.indexOf('youtubeusername')],
+          subscribers: parseInt(row[titles.indexOf('youtubesubscribers')]) || 0,
+          socialUrl: row[titles.indexOf('youtubesocialurl')],
+          averageViews: row[titles.indexOf('youtubeaverageviews')],
+        }
+
+        await prisma.youtube.create({
+          data: youtubeData,
         })
       }
     })
@@ -162,7 +223,7 @@ const uploadExcel = async (req, res) => {
 const getList = async (req, res) => {
   try {
     // To Do: filter
-    const { ER, language, userName, location } = req.query
+    const { ER, language, userName, location, promotionType } = req.query
     let { minPrice, maxPrice, minAudienceSize, maxAudienceSize } = req.query
 
     let influencers = await prisma.influencer.findMany({
@@ -198,25 +259,14 @@ const getList = async (req, res) => {
             influencer.account.name
               .toLowerCase()
               .includes(userName.toLowerCase()))) &&
+        (!promotionType ||
+          (promotionType && influencer.promotionType === promotionType)) &&
         (!location ||
           (location &&
             influencer.account.region
               .toLowerCase()
               .includes(location.toLowerCase()))),
     )
-
-    // if (tagArr.length) {
-    //   influencers = influencers.filter((influencer) => {
-    //     if (!influencer.account.tags) return false
-    //     const tags = influencer.account.tags.map((tag) => tag.tag.name)
-    //     console.log(tags)
-    //     let matched = true
-    //     tagArr.forEach((tag) => {
-    //       if (!tags.includes(tag)) matched = false
-    //     })
-    //     return matched
-    //   })
-    // }
 
     influencers.forEach((influencer) => {
       const budgets = influencer.campaigns.map(

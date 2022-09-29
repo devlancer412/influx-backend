@@ -223,7 +223,7 @@ model Youtube {
   accountId      Int              @unique
   account        Account          @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   socialUrl      String
-  averageLikes   Int
+  averageViews   Int              @default(0)
 }
 
 model YoutubeHistory {
@@ -231,5 +231,6 @@ model YoutubeHistory {
   youtubeId    Int
   youtube      Youtube  @relation(fields: [youtubeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   date         DateTime @db.Date
-  interactions Int
+  views        Int
+  subscribers  Int
 }
