@@ -163,9 +163,59 @@ const addInfluencer = async (req, res) => {
   }
 }
 
+const removeInfluencer = async (req, res) => {
+  try {
+    const { campaignId, influencerId } = req.body
+    const campaign = await prisma.campaign.findUnique({
+      where: {
+        id: campaignId,
+      },
+    })
+
+    const influencer = await prisma.influencer.findUnique({
+      where: {
+        id: influencerId,
+      },
+    })
+
+    if (!campaign || !influencer) return res.status(400).json("The account doesn't exist")
+
+    const campaignInfluencer = await prisma.campaignInfluencer.findFirst({
+      where: {
+        campaignId,
+        influencerId
+      }
+    })
+
+    await prisma.campaignInfluencer.delete({
+      where: {
+        campaignId,
+        influencerId,
+      }
+    })
+
+    const negotiatedBudget = campaignInfluencer.negotiatedBudget
+
+    await prisma.campaign.update({
+      where: {
+        id: campaignId,
+      },
+      data: {
+        negoBudget: campaign.negoBudget - negotiatedBudget,
+      },
+    })
+
+    res.json('success')
+  } catch (error) {
+    console.log(error)
+    res.status(400).json(error)
+  }
+}
+
 module.exports = {
   store,
   getList,
   addInfluencer,
+  removeInfluencer,
   getById,
 }

@@ -9,6 +9,8 @@ router.get('/account/:accountId', campaignsCtrl.getList)
 
 router.post('/addInfluencer', campaignsCtrl.addInfluencer)
 
+router.post('/removeInfluencer', campaignsCtrl.removeInfluencer)
+
 router.get('/:id', campaignsCtrl.getById)
 
 module.exports = router
