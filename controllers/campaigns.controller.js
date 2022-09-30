@@ -187,6 +187,8 @@ const removeInfluencer = async (req, res) => {
       }
     })
 
+    if (!campaignInfluencer) return res.status(400).json("The influencer doesn't exist in the campaign")
+
     await prisma.campaignInfluencer.delete({
       where: {
         campaignId,
