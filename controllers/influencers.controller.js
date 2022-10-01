@@ -309,11 +309,31 @@ const getList = async (req, res) => {
       include: {
         account: {
           include: {
-            telegram: true,
-            twitter: true,
-            tiktok: true,
-            instagram: true,
-            youtube: true,
+            telegram: {
+              include: {
+                telegramHistory: true,
+              },
+            },
+            youtube: {
+              include: {
+                youtubeHistory: true,
+              },
+            },
+            tiktok: {
+              include: {
+                tiktokHistory: true,
+              },
+            },
+            twitter: {
+              include: {
+                twitterHistory: true,
+              },
+            },
+            instagram: {
+              include: {
+                instagramHistory: true,
+              },
+            },
           },
         },
         campaigns: {
