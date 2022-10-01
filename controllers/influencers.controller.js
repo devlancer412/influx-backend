@@ -401,7 +401,35 @@ const getById = async (req, res) => {
         id: id * 1,
       },
       include: {
-        account: true,
+        account: {
+          include: {
+            telegram: {
+              include: {
+                telegramHistory: true,
+              },
+            },
+            youtube: {
+              include: {
+                youtubeHistory: true,
+              },
+            },
+            tiktok: {
+              include: {
+                tiktokHistory: true,
+              },
+            },
+            twitter: {
+              include: {
+                twitterHistory: true,
+              },
+            },
+            instagram: {
+              include: {
+                instagramHistory: true,
+              },
+            },
+          },
+        },
         campaigns: {
           include: {
             campaign: true,

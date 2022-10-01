@@ -79,7 +79,15 @@ const storeTwitter = async (query, accountId) => {
         },
       })
       // To Do: Remove old one and create new one
-
+      for (const day of daily) {
+        await prisma.twitterHistory.create({
+          data: {
+            twitterId: twitter.id,
+            date: moment(day.date, 'YYYY-MM-DD').toDate(),
+            impressions: day.tweets,
+          },
+        })
+      }
       // for (const day of daily) {
 
       // await prisma.twitterHistory.update({
@@ -156,6 +164,15 @@ const storeTiktok = async (query, accountId) => {
         },
       })
       // To Do: Remove old one and create new one
+      for (const day of daily) {
+        await prisma.tiktokHistory.create({
+          data: {
+            tiktokId: tiktok.id,
+            date: moment(day.date, 'YYYY-MM-DD').toDate(),
+            likes: day.likes,
+          },
+        })
+      }
     }
   } catch (error) {
     console.log(error)
@@ -219,6 +236,15 @@ const storeInstagram = async (query, accountId) => {
         },
       })
       // To Do: Remove old one and create new one
+      for (const day of daily) {
+        await prisma.instagramHistory.create({
+          data: {
+            instagramId: instagram.id,
+            date: moment(day.date, 'YYYY-MM-DD').toDate(),
+            interactions: Math.floor(day.avg_likes + day.avg_comments),
+          },
+        })
+      }
     }
   } catch (error) {
     console.log(error)
@@ -282,6 +308,16 @@ const storeYoutube = async (query, accountId) => {
         },
       })
       // To Do: Remove old one and create new one
+      for (const day of daily) {
+        await prisma.youtubeHistory.create({
+          data: {
+            youtubeId: youtube.id,
+            date: moment(day.date, 'YYYY-MM-DD').toDate(),
+            views: day.views,
+            subscribers: day.subs,
+          },
+        })
+      }
     }
   } catch (error) {
     console.log(error)

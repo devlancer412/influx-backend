@@ -92,31 +92,11 @@ const getById = async (req, res) => {
               include: {
                 account: {
                   include: {
-                    telegram: {
-                      include: {
-                        telegramHistory: true,
-                      },
-                    },
-                    youtube: {
-                      include: {
-                        youtubeHistory: true,
-                      },
-                    },
-                    tiktok: {
-                      include: {
-                        tiktokHistory: true,
-                      },
-                    },
-                    twitter: {
-                      include: {
-                        twitterHistory: true,
-                      },
-                    },
-                    instagram: {
-                      include: {
-                        instagramHistory: true,
-                      },
-                    },
+                    telegram: true,
+                    youtube: true,
+                    tiktok: true,
+                    twitter: true,
+                    instagram: true,
                   },
                 },
               },
@@ -126,20 +106,15 @@ const getById = async (req, res) => {
       },
     })
 
-    let totalFollowers = 0
-    campaign.influencers.forEach((influencer) => {
-      if (influencer.influencer.account.telegram)
-        totalFollowers += influencer.influencer.account.telegram.channelMembers
-      if (influencer.influencer.account.instagram)
-        totalFollowers += influencer.influencer.account.instagram.followers
-      if (influencer.influencer.account.youtube)
-        totalFollowers += influencer.influencer.account.youtube.subscribers
-      if (influencer.influencer.account.twitter)
-        totalFollowers += influencer.influencer.account.twitter.followers
-      if (influencer.influencer.account.tiktok)
-        totalFollowers += influencer.influencer.account.tiktok.followers
+    let totalFollowers = 0;
+    campaign.influencers.forEach(influencer => {
+      if (influencer.influencer.account.telegram) totalFollowers += influencer.influencer.account.telegram.channelMembers;
+      if (influencer.influencer.account.instagram) totalFollowers += influencer.influencer.account.instagram.followers;
+      if (influencer.influencer.account.youtube) totalFollowers += influencer.influencer.account.youtube.subscribers;
+      if (influencer.influencer.account.twitter) totalFollowers += influencer.influencer.account.twitter.followers;
+      if (influencer.influencer.account.tiktok) totalFollowers += influencer.influencer.account.tiktok.followers;
     })
-    campaign.totalFollowers = totalFollowers
+    campaign.totalFollowers = totalFollowers;
     res.json(campaign)
   } catch (error) {
     console.log(error)
@@ -162,8 +137,7 @@ const addInfluencer = async (req, res) => {
       },
     })
 
-    if (!campaign || !influencer)
-      return res.status(400).json("The account doesn't exist")
+    if (!campaign || !influencer) return res.status(400).json("The account doesn't exist")
 
     await prisma.campaignInfluencer.create({
       data: {
@@ -205,26 +179,22 @@ const removeInfluencer = async (req, res) => {
       },
     })
 
-    if (!campaign || !influencer)
-      return res.status(400).json("The account doesn't exist")
+    if (!campaign || !influencer) return res.status(400).json("The account doesn't exist")
 
     const campaignInfluencer = await prisma.campaignInfluencer.findFirst({
       where: {
         campaignId,
-        influencerId,
-      },
+        influencerId
+      }
     })
 
-    if (!campaignInfluencer)
-      return res
-        .status(400)
-        .json("The influencer doesn't exist in the campaign")
+    if (!campaignInfluencer) return res.status(400).json("The influencer doesn't exist in the campaign")
 
     await prisma.campaignInfluencer.delete({
       where: {
         campaignId,
         influencerId,
-      },
+      }
     })
 
     const negotiatedBudget = campaignInfluencer.negotiatedBudget
