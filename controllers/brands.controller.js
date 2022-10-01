@@ -171,7 +171,7 @@ const getBrandIdByEmail = async (req, res) => {
         brand: true,
       },
     })
-    if (!account || !account.brand) return res.json('Brand does not exist')
+    if (!account || !account.brand) return res.status(400).json('Brand does not exist')
     res.json(account.brand.id)
   } catch (error) {
     console.log(error)
