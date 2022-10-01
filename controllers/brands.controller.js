@@ -22,12 +22,14 @@ const store = async (req, res) => {
 
     let brandId
     if (!accountId) {
-      if (await prisma.account.findFirst({
-        where: {
-          email
-        }
-      })) {
-        return res.status(400).json("The Email already exists")
+      if (
+        await prisma.account.findFirst({
+          where: {
+            email,
+          },
+        })
+      ) {
+        return res.status(400).json('The Email already exists')
       }
       const newAccount = await prisma.account.create({
         data: {
@@ -86,6 +88,12 @@ const store = async (req, res) => {
 
       brandId = brand.id
     }
+
+    await socialCtrl.storeInstagram(userName, brand.accountId)
+    await socialCtrl.storeTelegram(userName, brand.accountId)
+    await socialCtrl.storeTwitter(userName, brand.accountId)
+    await socialCtrl.storeYoutube(userName, brand.accountId)
+    await socialCtrl.storeTiktok(userName, brand.accountId)
 
     const brand = await prisma.brand.findUnique({
       where: {

@@ -16,8 +16,8 @@ const store = async (req, res) => {
       region,
       language,
       loginChannel,
-      mainChannel,
-      nicke,
+      // mainChannel,
+      niche,
       contactLink,
     } = req.body
     let influencerId
@@ -48,7 +48,7 @@ const store = async (req, res) => {
           engagementRate,
           loginChannel,
           mainChannel,
-          nicke,
+          niche,
           contactLink,
         },
       })
@@ -80,19 +80,33 @@ const store = async (req, res) => {
           engagementRate,
           loginChannel,
           mainChannel,
-          nicke,
+          niche,
           contactLink,
         },
       })
       influencerId = influencer.id
     }
 
+    await socialCtrl.storeInstagram(userName, influencer.accountId)
+    await socialCtrl.storeTelegram(userName, influencer.accountId)
+    await socialCtrl.storeTwitter(userName, influencer.accountId)
+    await socialCtrl.storeYoutube(userName, influencer.accountId)
+    await socialCtrl.storeTiktok(userName, influencer.accountId)
+
+    await determineMainChannel(influencerId)
+
     const influencer = await prisma.influencer.findUnique({
       where: {
         id: influencerId,
       },
       include: {
-        account: true,
+        account: {
+          instagram: true,
+          telegram: true,
+          twitter: true,
+          youtube: true,
+          tiktok: true,
+        },
       },
     })
 
@@ -101,6 +115,65 @@ const store = async (req, res) => {
     console.log(error)
     res.status(400).json(error)
   }
+}
+
+const determineMainChannel = async (influencerId) => {
+  const influencer = await prisma.influencer.findUnique({
+    where: {
+      id: influencerId,
+    },
+    include: {
+      account: {
+        instagram: true,
+        telegram: true,
+        twitter: true,
+        youtube: true,
+        tiktok: true,
+      },
+    },
+  })
+
+  let mainChannel
+  let maxFollowers = 0
+  if (influencer.account.instagram?.followers) {
+    if (influencer.account.instagram.followers >= maxFollowers) {
+      maxFollowers = influencer.account.instagram.followers
+      mainChannel = 'Instagram'
+    }
+  }
+  if (influencer.account.twitter?.followers) {
+    if (influencer.account.twitter.followers >= maxFollowers) {
+      maxFollowers = influencer.account.twitter.followers
+      mainChannel = 'Twitter'
+    }
+  }
+  if (influencer.account.youtube?.subscribers) {
+    if (influencer.account.youtube.subscribers >= maxFollowers) {
+      maxFollowers = influencer.account.youtube.subscribers
+      mainChannel = 'Youtube'
+    }
+  }
+  if (influencer.account.telegram?.channelMembers) {
+    if (influencer.account.telegram.channelMembers >= maxFollowers) {
+      maxFollowers = influencer.account.telegram.channelMembers
+      mainChannel = 'Telegram'
+    }
+  }
+  if (influencer.account.tiktok?.followers) {
+    if (influencer.account.tiktok.followers >= maxFollowers) {
+      maxFollowers = influencer.account.tiktok.followers
+      mainChannel = 'Tiktok'
+    }
+  }
+
+  await prisma.influencer.update({
+    where: {
+      id: influencerId,
+    },
+    data: {
+      mainChannel,
+    },
+  })
 }
 
 const uploadExcel = async (req, res) => {
@@ -149,7 +222,7 @@ const uploadExcel = async (req, res) => {
           promotionType: row[titles.indexOf('promotiontype')],
         }
 
-        await prisma.influencer.create({
+        const influencer = await prisma.influencer.create({
           data: influencerData,
         })
 
@@ -213,6 +286,7 @@ const uploadExcel = async (req, res) => {
 
         await socialCtrl.storeYoutube(youtubeData.username, account.id)
 
+        await determineMainChannel(influencer.id)
       }
     })
   } catch (error) {
