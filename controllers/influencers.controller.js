@@ -7,7 +7,6 @@ const prisma = new PrismaClient()
 const store = async (req, res) => {
   try {
     const {
-      accountId,
       name,
       email,
       logo,
@@ -16,10 +15,12 @@ const store = async (req, res) => {
       region,
       language,
       loginChannel,
-      // mainChannel,
       niche,
       contactLink,
     } = req.body
+
+    let { accountId } = req.body
+
     let influencerId
     if (!accountId) {
       if (
@@ -40,14 +41,14 @@ const store = async (req, res) => {
           language,
         },
       })
+      accountId = newAccount.id
 
       const newInfluencer = await prisma.influencer.create({
         data: {
-          accountId: newAccount.id,
+          accountId,
           isVIP,
           engagementRate,
           loginChannel,
-          mainChannel,
           niche,
           contactLink,
         },
@@ -79,7 +80,6 @@ const store = async (req, res) => {
           isVIP,
           engagementRate,
           loginChannel,
-          mainChannel,
           niche,
           contactLink,
         },
@@ -87,11 +87,11 @@ const store = async (req, res) => {
       influencerId = influencer.id
     }
 
-    await socialCtrl.storeInstagram(userName, influencer.accountId)
-    await socialCtrl.storeTelegram(userName, influencer.accountId)
-    await socialCtrl.storeTwitter(userName, influencer.accountId)
-    await socialCtrl.storeYoutube(userName, influencer.accountId)
-    await socialCtrl.storeTiktok(userName, influencer.accountId)
+    await socialCtrl.storeInstagram(name, accountId)
+    await socialCtrl.storeTelegram(name, accountId)
+    await socialCtrl.storeTwitter(name, accountId)
+    await socialCtrl.storeYoutube(name, accountId)
+    await socialCtrl.storeTiktok(name, accountId)
 
     await determineMainChannel(influencerId)
 
@@ -101,11 +101,13 @@ const store = async (req, res) => {
       },
       include: {
         account: {
-          instagram: true,
-          telegram: true,
-          twitter: true,
-          youtube: true,
-          tiktok: true,
+          include: {
+            instagram: true,
+            telegram: true,
+            twitter: true,
+            youtube: true,
+            tiktok: true,
+          },
         },
       },
     })
@@ -124,11 +126,13 @@ const determineMainChannel = async (influencerId) => {
     },
     include: {
       account: {
-        instagram: true,
-        telegram: true,
-        twitter: true,
-        youtube: true,
-        tiktok: true,
+        include: {
+          instagram: true,
+          telegram: true,
+          twitter: true,
+          youtube: true,
+          tiktok: true,
+        },
       },
     },
   })

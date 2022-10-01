@@ -1,10 +1,12 @@
 const { PrismaClient } = require('@prisma/client')
 const axios = require('axios')
+const moment = require('moment')
 
 const prisma = new PrismaClient()
 
 const storeTelegram = async (query, accountId) => {
   // To Do:
+  return
   try {
     const telegram = await prisma.telegram.create({
       data: {
@@ -23,6 +25,7 @@ const storeTelegram = async (query, accountId) => {
 }
 
 const storeTwitter = async (query, accountId) => {
+  query = 'socialblade'
   try {
     const response = await axios.get(
       `https://matrix.sbapis.com/b/twitter/statistics?query=${query}&history=default&clientid=${process.env.SOCIAL_BLADE_CLIENT_ID}&token=${process.env.SOCIAL_BLADE_TOKEN}`,
@@ -57,7 +60,7 @@ const storeTwitter = async (query, accountId) => {
         await prisma.twitterHistory.create({
           data: {
             twitterId: twitter.id,
-            date: day.date,
+            date: moment(day.date, 'YYYY-MM-DD').toDate(),
             impressions: day.tweets,
           },
         })
@@ -98,6 +101,7 @@ const storeTwitter = async (query, accountId) => {
 }
 
 const storeTiktok = async (query, accountId) => {
+  query = 'socialblade'
   try {
     const response = await axios.get(
       `https://matrix.sbapis.com/b/tiktok/statistics?query=${query}&history=default&clientid=${process.env.SOCIAL_BLADE_CLIENT_ID}&token=${process.env.SOCIAL_BLADE_TOKEN}`,
@@ -133,7 +137,7 @@ const storeTiktok = async (query, accountId) => {
         await prisma.tiktokHistory.create({
           data: {
             tiktokId: tiktok.id,
-            date: day.date,
+            date: moment(day.date, 'YYYY-MM-DD').toDate(),
             likes: day.likes,
           },
         })
@@ -159,6 +163,7 @@ const storeTiktok = async (query, accountId) => {
 }
 
 const storeInstagram = async (query, accountId) => {
+  query = 'socialblade'
   try {
     const response = await axios.get(
       `https://matrix.sbapis.com/b/instagram/statistics?query=${query}&history=default&clientid=${process.env.SOCIAL_BLADE_CLIENT_ID}&token=${process.env.SOCIAL_BLADE_TOKEN}`,
@@ -195,7 +200,7 @@ const storeInstagram = async (query, accountId) => {
         await prisma.instagramHistory.create({
           data: {
             instagramId: instagram.id,
-            date: day.date,
+            date: moment(day.date, 'YYYY-MM-DD').toDate(),
             interactions: Math.floor(day.avg_likes + day.avg_comments),
           },
         })
@@ -221,6 +226,7 @@ const storeInstagram = async (query, accountId) => {
 }
 
 const storeYoutube = async (query, accountId) => {
+  query = 'socialblade'
   try {
     const response = await axios.get(
       `https://matrix.sbapis.com/b/youtube/statistics?query=${query}&history=default&clientid=${process.env.SOCIAL_BLADE_CLIENT_ID}&token=${process.env.SOCIAL_BLADE_TOKEN}`,
@@ -256,7 +262,7 @@ const storeYoutube = async (query, accountId) => {
         await prisma.youtubeHistory.create({
           data: {
             youtubeId: youtube.id,
-            date: day.date,
+            date: moment(day.date, 'YYYY-MM-DD').toDate(),
             views: day.views,
             subscribers: day.subs,
           },

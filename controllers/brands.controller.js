@@ -1,11 +1,11 @@
 const { PrismaClient } = require('@prisma/client')
+const socialCtrl = require('../controllers/social.controller')
 
 const prisma = new PrismaClient()
 
 const store = async (req, res) => {
   try {
     const {
-      accountId,
       name,
       email,
       logo,
@@ -19,6 +19,7 @@ const store = async (req, res) => {
       pdfReview,
       profileLive,
     } = req.body
+    let { accountId } = req.body
 
     let brandId
     if (!accountId) {
@@ -40,10 +41,11 @@ const store = async (req, res) => {
           language,
         },
       })
+      accountId = newAccount.id
 
       const newBrand = await prisma.brand.create({
         data: {
-          accountId: newAccount.id,
+          accountId,
           desc,
           salesPhase,
           budget,
@@ -89,11 +91,11 @@ const store = async (req, res) => {
       brandId = brand.id
     }
 
-    await socialCtrl.storeInstagram(userName, brand.accountId)
-    await socialCtrl.storeTelegram(userName, brand.accountId)
-    await socialCtrl.storeTwitter(userName, brand.accountId)
-    await socialCtrl.storeYoutube(userName, brand.accountId)
-    await socialCtrl.storeTiktok(userName, brand.accountId)
+    await socialCtrl.storeInstagram(name, accountId)
+    await socialCtrl.storeTelegram(name, accountId)
+    await socialCtrl.storeTwitter(name, accountId)
+    await socialCtrl.storeYoutube(name, accountId)
+    await socialCtrl.storeTiktok(name, accountId)
 
     const brand = await prisma.brand.findUnique({
       where: {
