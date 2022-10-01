@@ -351,7 +351,8 @@ const getList = async (req, res) => {
       const budgets = influencer.campaigns.map(
         (campaign) => campaign.campaign.negoBudget,
       )
-      influencer.priceRange = [Math.min(...budgets) || 0, Math.max(...budgets) || 0]
+      influencer.priceRange = [Math.min(...budgets), Math.max(...budgets)]
+      if (!budgets.length) influencer.priceRange = [0, 0]
     })
 
     minAudienceSize = minAudienceSize ? minAudienceSize * 1 : 0
