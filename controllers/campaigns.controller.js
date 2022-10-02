@@ -11,7 +11,7 @@ const store = async (req, res) => {
         name,
         avgER: 'Normal',
         creator,
-        template,
+        template: template || '',
       },
     })
 
