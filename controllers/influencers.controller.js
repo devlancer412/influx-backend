@@ -186,7 +186,7 @@ const uploadExcel = async (req, res) => {
       return res.status(400).send('Please upload an excel file!')
     }
     let path =
-      __dirname + '../resources/static/assets/uploads/' + req.file.filename
+      __dirname + '/../resources/static/assets/uploads/' + req.file.filename
 
     readXlsxFile(path).then(async (rows) => {
       const titles = rows[0].map((title) => title.toLowerCase())
@@ -293,6 +293,7 @@ const uploadExcel = async (req, res) => {
         await determineMainChannel(influencer.id)
       }
     })
+    res.json("success")
   } catch (error) {
     console.log(error)
     res.status(500).json({ error })
