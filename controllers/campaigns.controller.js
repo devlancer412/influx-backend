@@ -173,7 +173,7 @@ const removeInfluencer = async (req, res) => {
       },
     })
 
-    const influencer = await prisma.influencer.findUnique({
+    const influencer = await prisma.influencer.findFirst({
       where: {
         id: influencerId,
       },
@@ -192,8 +192,7 @@ const removeInfluencer = async (req, res) => {
 
     await prisma.campaignInfluencer.delete({
       where: {
-        campaignId,
-        influencerId,
+        id: campaignInfluencer.id
       }
     })
 
