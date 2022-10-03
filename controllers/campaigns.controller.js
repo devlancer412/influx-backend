@@ -5,17 +5,33 @@ const prisma = new PrismaClient()
 const store = async (req, res) => {
   // To Do:
   try {
-    const { name, creator, template } = req.body
-    const newCampaign = await prisma.campaign.create({
-      data: {
-        name,
-        avgER: 'Normal',
-        creator,
-        template: template || '',
-      },
-    })
+    const { name, creator, template, campaignId } = req.body
+    let campaign
 
-    res.json(newCampaign)
+    if (!campaignId) {
+      campaign = await prisma.campaign.create({
+        data: {
+          name,
+          avgER: 'Normal',
+          creator,
+          template,
+        },
+      })
+    } else {
+      campaign = await prisma.campaign.update({
+        where: {
+          id: campaignId
+        },
+        data: {
+          name,
+          avgER: 'Normal',
+          creator,
+          template
+        }
+      })
+    }
+
+    res.json(campaign)
   } catch (error) {
     console.log(error)
     res.status(400).json(error)
@@ -106,15 +122,20 @@ const getById = async (req, res) => {
       },
     })
 
-    let totalFollowers = 0;
-    campaign.influencers.forEach(influencer => {
-      if (influencer.influencer.account.telegram) totalFollowers += influencer.influencer.account.telegram.channelMembers;
-      if (influencer.influencer.account.instagram) totalFollowers += influencer.influencer.account.instagram.followers;
-      if (influencer.influencer.account.youtube) totalFollowers += influencer.influencer.account.youtube.subscribers;
-      if (influencer.influencer.account.twitter) totalFollowers += influencer.influencer.account.twitter.followers;
-      if (influencer.influencer.account.tiktok) totalFollowers += influencer.influencer.account.tiktok.followers;
+    let totalFollowers = 0
+    campaign.influencers.forEach((influencer) => {
+      if (influencer.influencer.account.telegram)
+        totalFollowers += influencer.influencer.account.telegram.channelMembers
+      if (influencer.influencer.account.instagram)
+        totalFollowers += influencer.influencer.account.instagram.followers
+      if (influencer.influencer.account.youtube)
+        totalFollowers += influencer.influencer.account.youtube.subscribers
+      if (influencer.influencer.account.twitter)
+        totalFollowers += influencer.influencer.account.twitter.followers
+      if (influencer.influencer.account.tiktok)
+        totalFollowers += influencer.influencer.account.tiktok.followers
     })
-    campaign.totalFollowers = totalFollowers;
+    campaign.totalFollowers = totalFollowers
     res.json(campaign)
   } catch (error) {
     console.log(error)
@@ -137,7 +158,8 @@ const addInfluencer = async (req, res) => {
       },
     })
 
-    if (!campaign || !influencer) return res.status(400).json("The account doesn't exist")
+    if (!campaign || !influencer)
+      return res.status(400).json("The account doesn't exist")
 
     await prisma.campaignInfluencer.create({
       data: {
@@ -179,21 +201,25 @@ const removeInfluencer = async (req, res) => {
       },
     })
 
-    if (!campaign || !influencer) return res.status(400).json("The account doesn't exist")
+    if (!campaign || !influencer)
+      return res.status(400).json("The account doesn't exist")
 
     const campaignInfluencer = await prisma.campaignInfluencer.findFirst({
       where: {
         campaignId,
-        influencerId
-      }
+        influencerId,
+      },
     })
 
-    if (!campaignInfluencer) return res.status(400).json("The influencer doesn't exist in the campaign")
+    if (!campaignInfluencer)
+      return res
+        .status(400)
+        .json("The influencer doesn't exist in the campaign")
 
     await prisma.campaignInfluencer.delete({
       where: {
-        id: campaignInfluencer.id
-      }
+        id: campaignInfluencer.id,
+      },
     })
 
     const negotiatedBudget = campaignInfluencer.negotiatedBudget
