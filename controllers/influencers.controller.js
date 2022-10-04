@@ -407,7 +407,7 @@ const getList = async (req, res) => {
       );
     }
 
-    res.json(JSON.stringify(influencers));
+    res.send(JSON.stringify(influencers));
   } catch (error) {
     console.log(error);
     res.status(400).json(error);
