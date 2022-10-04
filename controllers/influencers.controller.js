@@ -306,7 +306,7 @@ const getList = async (req, res) => {
     return res.json('connected');
   } catch (err) {
     console.log(error);
-    return res.json(error);
+    return res.json("Can't connect to db server");
   }
   // To Do: filter
   try {
