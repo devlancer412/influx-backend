@@ -314,7 +314,7 @@ const getList = async (req, res) => {
     await prisma.$connect();
     return res.json('connected');
   } catch (err) {
-    console.log(error);
+    console.log(err);
     return res.json("Can't connect to db server");
   }
   // To Do: filter
