@@ -296,7 +296,7 @@ const uploadExcel = async (req, res) => {
     res.json('success');
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error });
+    res.status(400).json({ error });
   }
 };
 
@@ -466,14 +466,9 @@ const getById = async (req, res) => {
   }
 };
 
-const test = async (req, res) => {
-  res.json('Testing sub url');
-};
-
 module.exports = {
   store,
   getList,
   getById,
   uploadExcel,
-  test,
 };
