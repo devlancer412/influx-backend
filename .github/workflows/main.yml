@@ -3,43 +3,61 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 
 jobs:
+
   continuous-integration:
     runs-on: ubuntu-latest
 
     steps:
       # Step 1      
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       
       # Step 2
-      - name: Set up Node 
-        uses: actions/setup-node@v3
+      - name: Set up Python 
+        uses: actions/setup-python@v2
         with:
-          node-version: 16.15.0
+          python-version: 3.7
           architecture: x64
-
       # Step 3
-      - name: Install Yarn
-        run: npm install --save -g yarn
-
+      - name: Install Python Virtual ENV
+        run: pip3 install virtualenv
       # Step 4
-      - name:  Setup Node modules
-        uses: yarn
-        
+      - name:  Setup Virtual env
+        uses: actions/cache@v2
+        id: cache-venv
+        with:
+          path: venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-venv-
       # Step 5
-      - name: Add App to Zip file
-        run: zip -g ./api.zip -r .
+      - name: Activate and Install Depencies into Virtual env
+        run: python -m venv venv && source venv/bin/activate &&
+          pip3 install -r requirements.txt
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+      # Step 6     
+      - name: Activate venv and Run Test        
+        run: . venv/bin/activate && cd ./app && python -m pytest ./tests
       
-      # Step 6
+      # Step 7
+      - name: Create Zipfile archive of Dependencies
+        run: |
+          cd ./venv/lib/python3.7/site-packages
+          zip -r9 ../../../../api.zip .
+      
+      # Step 8
+      - name: Add App to Zip file
+        run: cd ./app && zip -g ../api.zip -r .
+      
+      # Step 9
       - name: Upload zip file artifact
         uses: actions/upload-artifact@v2
         with:
           name: api
           path: api.zip
+
 
 
   continuous-deployment:
