@@ -296,7 +296,7 @@ const uploadExcel = async (req, res) => {
     res.json('success');
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error });
+    res.json(JSON.stringify(error));
   }
 };
 
