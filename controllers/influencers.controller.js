@@ -17,6 +17,11 @@ const store = async (req, res) => {
       loginChannel,
       niche,
       contactLink,
+      instagramUsername,
+      telegramUsername,
+      youtubeUsername,
+      twitterUsername,
+      tiktokUsername,
     } = req.body
 
     let { accountId } = req.body
@@ -66,9 +71,9 @@ const store = async (req, res) => {
         data: {
           name,
           email,
-          logo,
-          region,
-          language,
+          logo: logo || '',
+          region: region || '',
+          language: language || '',
         },
       })
 
@@ -87,11 +92,15 @@ const store = async (req, res) => {
       influencerId = influencer.id
     }
 
-    await socialCtrl.storeInstagram(name, accountId)
-    await socialCtrl.storeTelegram(name, accountId)
-    await socialCtrl.storeTwitter(name, accountId)
-    await socialCtrl.storeYoutube(name, accountId)
-    await socialCtrl.storeTiktok(name, accountId)
+    if (instagramUsername)
+      await socialCtrl.storeInstagram(instagramUsername, accountId)
+    if (telegramUsername)
+      await socialCtrl.storeTelegram(telegramUsername, accountId)
+    if (twitterUsername)
+      await socialCtrl.storeTwitter(twitterUsername, accountId)
+    if (youtubeUsername)
+      await socialCtrl.storeYoutube(youtubeUsername, accountId)
+    if (tiktokUsername) await socialCtrl.storeTiktok(tiktokUsername, accountId)
 
     await determineMainChannel(influencerId)
 
@@ -293,7 +302,7 @@ const uploadExcel = async (req, res) => {
         await determineMainChannel(influencer.id)
       }
     })
-    res.json("success")
+    res.json('success')
   } catch (error) {
     console.log(error)
     res.status(500).json({ error })
@@ -466,9 +475,35 @@ const getById = async (req, res) => {
   }
 }
 
+const removeInfluencer = async (req, res) => {
+  const { id } = req.params
+  try {
+    if (
+      await prisma.influencer.findUnique({
+        where: {
+          id,
+        },
+      })
+    ) {
+      await prisma.influencer.delete({
+        where: {
+          id,
+        },
+      })
+      return res.json('success')
+    } else {
+      return res.status(400).json("The influencer doesn't exist")
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(400).json(error)
+  }
+}
+
 module.exports = {
   store,
   getList,
   getById,
   uploadExcel,
+  removeInfluencer,
 }

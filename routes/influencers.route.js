@@ -12,4 +12,6 @@ router.get('/', influencersCtrl.getList)
 
 router.get('/:id', influencersCtrl.getById)
 
+router.delete('/:id', influencersCtrl.removeInfluencer)
+
 module.exports = router

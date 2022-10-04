@@ -25,7 +25,7 @@ model Account {
   youtube    Youtube?
   name       String
   email      String         @unique
-  logo       String         @db.VarChar(1000)
+  logo       String?         @db.VarChar(1000)
   region     String
   language   String
 }
