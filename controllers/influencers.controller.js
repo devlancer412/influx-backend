@@ -296,14 +296,14 @@ const uploadExcel = async (req, res) => {
     res.json('success');
   } catch (error) {
     console.log(error);
-    res.json(JSON.stringify(error));
+    res.status(500).json({ error });
   }
 };
 
 const getList = async (req, res) => {
-  console.log('getting list');
+  // To Do: filter
+
   try {
-    // To Do: filter
     const { ER, language, userName, location, promotionType } = req.query;
     let { minPrice, maxPrice, minAudienceSize, maxAudienceSize } = req.query;
 
@@ -408,10 +408,10 @@ const getList = async (req, res) => {
       );
     }
 
-    res.send(JSON.stringify(influencers));
+    res.json(influencers);
   } catch (error) {
     console.log(error);
-    res.status(400).json(error);
+    res.status(500).json(error);
   }
 };
 
@@ -463,7 +463,7 @@ const getById = async (req, res) => {
     res.json(influencer);
   } catch (error) {
     console.log(error);
-    res.json(JSON.stringify(error));
+    res.status(400).json(error);
   }
 };
 
