@@ -466,9 +466,14 @@ const getById = async (req, res) => {
   }
 };
 
+const test = (req, res) => {
+  res.json('Testing sub url');
+};
+
 module.exports = {
   store,
   getList,
   getById,
   uploadExcel,
+  test,
 };
