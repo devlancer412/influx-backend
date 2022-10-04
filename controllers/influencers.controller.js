@@ -466,7 +466,7 @@ const getById = async (req, res) => {
   }
 };
 
-const test = (req, res) => {
+const test = async (req, res) => {
   res.json('Testing sub url');
 };
 
