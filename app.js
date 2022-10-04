@@ -1,7 +1,7 @@
 const app = require('./config/express');
 const routes = require('./routes/index.route');
 // const socialCtr = require('./controllers/social.controller');
-// const serverless = require('serverless-http');
+const serverless = require('serverless-http');
 
 // Router
 app.get('/test', (req, res) => res.json('Test'));
