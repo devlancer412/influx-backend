@@ -301,8 +301,8 @@ const uploadExcel = async (req, res) => {
 };
 
 const getList = async (req, res) => {
+  return res.json(JSON.stringify(prisma));
   // To Do: filter
-
   try {
     const { ER, language, userName, location, promotionType } = req.query;
     let { minPrice, maxPrice, minAudienceSize, maxAudienceSize } = req.query;

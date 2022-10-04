@@ -1,7 +1,7 @@
-const { PrismaClient } = require('@prisma/client')
-const socialCtrl = require('../controllers/social.controller')
+const { PrismaClient } = require('@prisma/client');
+const socialCtrl = require('../controllers/social.controller');
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 const store = async (req, res) => {
   try {
@@ -18,10 +18,10 @@ const store = async (req, res) => {
       pdfAudit,
       pdfReview,
       profileLive,
-    } = req.body
-    let { accountId } = req.body
+    } = req.body;
+    let { accountId } = req.body;
 
-    let brandId
+    let brandId;
     if (!accountId) {
       if (
         await prisma.account.findFirst({
@@ -30,7 +30,7 @@ const store = async (req, res) => {
           },
         })
       ) {
-        return res.status(400).json('The Email already exists')
+        return res.status(400).json('The Email already exists');
       }
       const newAccount = await prisma.account.create({
         data: {
@@ -40,8 +40,8 @@ const store = async (req, res) => {
           region,
           language,
         },
-      })
-      accountId = newAccount.id
+      });
+      accountId = newAccount.id;
 
       const newBrand = await prisma.brand.create({
         data: {
@@ -54,12 +54,12 @@ const store = async (req, res) => {
           pdfReview,
           profileLive,
         },
-      })
+      });
 
-      brandId = newBrand.id
+      brandId = newBrand.id;
     } else {
       if (!(await prisma.brand.findUnique({ where: { accountId } })))
-        return res.status(400).json("The account doesn't exist")
+        return res.status(400).json("The account doesn't exist");
       await prisma.account.update({
         where: {
           id: accountId,
@@ -71,7 +71,7 @@ const store = async (req, res) => {
           region,
           language,
         },
-      })
+      });
 
       const brand = await prisma.brand.update({
         where: {
@@ -86,16 +86,16 @@ const store = async (req, res) => {
           pdfReview,
           profileLive,
         },
-      })
+      });
 
-      brandId = brand.id
+      brandId = brand.id;
     }
 
-    await socialCtrl.storeInstagram(name, accountId)
-    await socialCtrl.storeTelegram(name, accountId)
-    await socialCtrl.storeTwitter(name, accountId)
-    await socialCtrl.storeYoutube(name, accountId)
-    await socialCtrl.storeTiktok(name, accountId)
+    await socialCtrl.storeInstagram(name, accountId);
+    await socialCtrl.storeTelegram(name, accountId);
+    await socialCtrl.storeTwitter(name, accountId);
+    await socialCtrl.storeYoutube(name, accountId);
+    await socialCtrl.storeTiktok(name, accountId);
 
     const brand = await prisma.brand.findUnique({
       where: {
@@ -104,14 +104,14 @@ const store = async (req, res) => {
       include: {
         account: true,
       },
-    })
+    });
 
-    res.json(brand)
+    res.json(brand);
   } catch (error) {
-    console.log(error)
-    res.status(400).json(error)
+    console.log(error);
+    res.status(400).json(error);
   }
-}
+};
 
 const getList = async (req, res) => {
   try {
@@ -120,17 +120,17 @@ const getList = async (req, res) => {
       include: {
         account: true,
       },
-    })
+    });
 
-    res.json(brands)
+    res.json(brands);
   } catch (error) {
-    console.log(error)
-    res.status(400).json(error)
+    console.log(error);
+    res.status(400).json(error);
   }
-}
+};
 
 const getById = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
   try {
     const brand = await prisma.brand.findUnique({
       where: {
@@ -152,16 +152,16 @@ const getById = async (req, res) => {
           },
         },
       },
-    })
-    res.json(brand)
+    });
+    res.json(brand);
   } catch (error) {
-    console.log(error)
-    res.status(400).json(error)
+    console.log(error);
+    res.status(400).json(error);
   }
-}
+};
 
 const getBrandIdByEmail = async (req, res) => {
-  const { email } = req.params
+  const { email } = req.params;
   try {
     const account = await prisma.account.findFirst({
       where: {
@@ -170,18 +170,19 @@ const getBrandIdByEmail = async (req, res) => {
       include: {
         brand: true,
       },
-    })
-    if (!account || !account.brand) return res.status(400).json('Brand does not exist')
-    res.json(account.brand.id)
+    });
+    if (!account || !account.brand)
+      return res.status(400).json('Brand does not exist');
+    res.json(account.brand.id);
   } catch (error) {
-    console.log(error)
-    res.status(400).json(error)
+    console.log(error);
+    res.status(400).json(error);
   }
-}
+};
 
 module.exports = {
   store,
   getList,
   getById,
   getBrandIdByEmail,
-}
+};
