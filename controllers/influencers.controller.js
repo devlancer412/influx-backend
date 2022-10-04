@@ -301,7 +301,7 @@ const uploadExcel = async (req, res) => {
 };
 
 const getList = async (req, res) => {
-  return res.json(process.env);
+  return res.json(prisma.influencer);
   // To Do: filter
   try {
     const { ER, language, userName, location, promotionType } = req.query;
