@@ -310,13 +310,13 @@ const uploadExcel = async (req, res) => {
 };
 
 const getList = async (req, res) => {
-  // try {
-  //   await prisma.$connect();
-  //   return res.json('connected');
-  // } catch (err) {
-  //   console.log(error);
-  //   return res.json("Can't connect to db server");
-  // }
+  try {
+    await prisma.$connect();
+    return res.json('connected');
+  } catch (err) {
+    console.log(error);
+    return res.json("Can't connect to db server");
+  }
   // To Do: filter
   try {
     const { ER, language, userName, location, promotionType } = req.query;
