@@ -25,7 +25,7 @@ jobs:
         run: npm install --save -g yarn
       # Step 4
       - name:  Setup Packages
-        uses: yarn install
+        run: yarn install
 
       # Step 5
       - name: Create Zipfile archive of Dependencies
