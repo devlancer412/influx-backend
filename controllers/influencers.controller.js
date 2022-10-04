@@ -301,6 +301,7 @@ const uploadExcel = async (req, res) => {
 };
 
 const getList = async (req, res) => {
+  console.log('getting list');
   try {
     // To Do: filter
     const { ER, language, userName, location, promotionType } = req.query;
@@ -462,7 +463,7 @@ const getById = async (req, res) => {
     res.json(influencer);
   } catch (error) {
     console.log(error);
-    res.status(400).json(error);
+    res.json(JSON.stringify(error));
   }
 };
 
